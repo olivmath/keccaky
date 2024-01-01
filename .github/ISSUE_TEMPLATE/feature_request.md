@@ -13,13 +13,13 @@ assignees: ""
 
 ## Describe what you expect! (Example)
 
-**I want Liby to work like this:**
+**I want keccaky to work like this:**
 
 ```py
-import liby
+import keccaky
 
 data = []
-result = liby.new_feature(data)
+result = keccaky.new_feature(data)
 
 assert result == ["new data very cool"]
 ```
