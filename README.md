@@ -2,6 +2,22 @@
 
 Secure and easy-to-use keccak
 
+> **🚨 WARNING:** Not yet ready for production!!!
+
+
+## Roadmap
+
+- [ ] Create Keccak 256 hash
+- [ ] Validate Collision Attack
+- [ ] Validate Pre Image Attack
+- [ ] Validate Second Pre Image Attack
+- [ ] Validate Birthday Attack
+- [ ] Validate Length Extension Attack
+- [ ] Validate Brute Force Attack
+- [ ] Validate Side Channel Attack
+- [ ] Validate Specific Attacks
+
+
 ## Docs
 
 **INSTALL**
