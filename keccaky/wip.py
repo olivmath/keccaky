@@ -3,8 +3,6 @@ from operator import xor
 from copy import deepcopy
 import functools
 
-str2list = lambda s: [c for c in s]
-
 
 RoundConstants = [
     0x0000000000000001,
@@ -74,10 +72,6 @@ RotationConstants = [
 Masks = [(1 << i) - 1 for i in range(65)]
 
 
-def bits2bytes(x):
-    return (int(x) + 7) / 8
-
-
 def rol(value, left, bits):
     top = value >> (bits - left)
     bot = (value & Masks[bits - left]) << left
@@ -90,61 +84,15 @@ def ror(value, right, bits):
     return bot | top
 
 
-def multirate_padding(used_bytes, align_bytes):
-    padlen = align_bytes - used_bytes
-    if padlen == 0:
-        padlen = align_bytes
-    # note: padding done in 'internal bit ordering', wherein LSB is leftmost
-    if padlen == 1:
-        return [0x81]
-    else:
-        return [0x01] + ([0x00] * (int(padlen) - 2)) + [0x80]
-
-
-def keccak_f(state):
-    def round(A, RC):
-        W, H = state.W, state.H
-        rangeW, rangeH = state.rangeW, state.rangeH
-        lanew = state.lanew
-        zero = state.zero
-
-        # theta
-        C = [functools.reduce(xor, A[x]) for x in rangeW]
-        D = [0] * W
-        for x in rangeW:
-            D[x] = C[(x - 1) % W] ^ rol(C[(x + 1) % W], 1, lanew)
-            for y in rangeH:
-                A[x][y] ^= D[x]
-
-        # rho and pi
-        B = zero()
-        for x in rangeW:
-            for y in rangeH:
-                B[y % W][(2 * x + 3 * y) % H] = rol(
-                    A[x][y], RotationConstants[y][x], lanew
-                )
-
-        # chi
-        for x in rangeW:
-            for y in rangeH:
-                A[x][y] = B[x][y] ^ ((~B[(x + 1) % W][y]) & B[(x + 2) % W][y])
-
-        # iota
-        A[0][0] ^= RC
-
-    l = int(log(state.lanew, 2))
-    nr = 12 + 2 * l
-
-    for ir in range(nr):
-        round(state.s, RoundConstants[ir])
-
-
 class KeccakState(object):
     W = 5
     H = 5
 
     rangeW = range(W)
     rangeH = range(H)
+
+    def __bits2bytes(self, x):
+        return (int(x) + 7) / 8
 
     @staticmethod
     def zero():
@@ -184,7 +132,7 @@ class KeccakState(object):
 
         # only byte-aligned
         assert self.bitrate % 8 == 0
-        self.bitrate_bytes = bits2bytes(self.bitrate)
+        self.bitrate_bytes = self.__bits2bytes(self.bitrate)
 
         assert self.b % 25 == 0
         self.lanew = self.b // 25
@@ -197,7 +145,7 @@ class KeccakState(object):
     def absorb(self, bb):
         assert len(bb) == self.bitrate_bytes
 
-        bb += [0] * int(bits2bytes(self.b - self.bitrate))
+        bb += [0] * int(self.__bits2bytes(self.b - self.bitrate))
         i = 0
 
         for y in self.rangeH:
@@ -209,7 +157,7 @@ class KeccakState(object):
         return self.get_bytes()[: self.bitrate_bytes]
 
     def get_bytes(self):
-        out = [0] * int(bits2bytes(self.b))
+        out = [0] * int(self.__bits2bytes(self.b))
         i = 0
         for y in self.rangeH:
             for x in self.rangeW:
@@ -243,7 +191,7 @@ class KeccakSponge(object):
         self.permfn(self.state)
 
     def absorb(self, s):
-        self.buffer = str2list(s)
+        self.buffer = list(s)
 
         while len(self.buffer) >= self.state.bitrate_bytes:
             self.absorb_block(self.buffer[: self.state.bitrate_bytes])
@@ -267,15 +215,65 @@ class KeccakSponge(object):
 
 
 class KeccakHash(object):
-    def __init__(self):
-        bitrate_bits = 1088
-        capacity_bits = 512
-        output_bits = 256
+    def __bits2bytes(self, x):
+        return (int(x) + 7) / 8
+
+    def __round(self, state, A, RC):
+        W, H = state.W, state.H
+        rangeW, rangeH = state.rangeW, state.rangeH
+        lanew = state.lanew
+        zero = state.zero
+
+        # theta
+        C = [functools.reduce(xor, A[x]) for x in rangeW]
+        D = [0] * W
+        for x in rangeW:
+            D[x] = C[(x - 1) % W] ^ rol(C[(x + 1) % W], 1, lanew)
+            for y in rangeH:
+                A[x][y] ^= D[x]
+
+        # rho and pi
+        B = zero()
+        for x in rangeW:
+            for y in rangeH:
+                B[y % W][(2 * x + 3 * y) % H] = rol(
+                    A[x][y], RotationConstants[y][x], lanew
+                )
+
+        # chi
+        for x in rangeW:
+            for y in rangeH:
+                A[x][y] = B[x][y] ^ ((~B[(x + 1) % W][y]) & B[(x + 2) % W][y])
+
+        # iota
+        A[0][0] ^= RC
+
+    def __keccak_f(self, state):
+        l = int(log(state.lanew, 2))
+        nr = 12 + 2 * l
+
+        for ir in range(nr):
+            self.__round(state, state.s, RoundConstants[ir])
+
+    def __multirate_padding(self, used_bytes, align_bytes):
+        padlen = align_bytes - used_bytes
+        if padlen == 0:
+            padlen = align_bytes
+        # note: padding done in 'internal bit ordering', wherein LSB is leftmost
+        if padlen == 1:
+            return [0x81]
+        else:
+            return [0x01] + ([0x00] * (int(padlen) - 2)) + [0x80]
+
+    def __init__(self, bitrate_bits=1088, capacity_bits=512, output_bits=256):
         self.sponge = KeccakSponge(
-            bitrate_bits, bitrate_bits + capacity_bits, multirate_padding, keccak_f
+            bitrate_bits,
+            bitrate_bits + capacity_bits,
+            self.__multirate_padding,
+            self.__keccak_f,
         )
-        self.digest_size = bits2bytes(output_bits)
-        self.block_size = bits2bytes(bitrate_bits)
+        self.digest_size = self.__bits2bytes(output_bits)
+        self.block_size = self.__bits2bytes(bitrate_bits)
 
     def __repr__(self):
         inf = (
@@ -285,9 +283,10 @@ class KeccakHash(object):
         )
         return "<KeccakHash with r=%d, c=%d, image=%d>" % inf
 
-    def digest(self, s):
-        self.sponge.absorb(s)
+    def digest(self, data: str):
+        data_encoded = data.encode()
+        self.sponge.absorb(data_encoded)
         finalised = self.sponge.copy()
         finalised.absorb_final()
         digest = finalised.squeeze(self.digest_size)
-        return "".join(map(chr, digest))
+        return bytes(digest)
