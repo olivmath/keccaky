@@ -9,7 +9,7 @@ readme = "README.md"
 license = "MIT"
 keywords = ["keccak", "ethereum", "sha3", "hash"]
 classifiers = [
-"Development Status :: 5 - Production/Stable",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -20,14 +20,13 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Security :: Cryptography"
+    "Topic :: Security :: Cryptography",
 ]
 
 [tool.poetry.dependencies]
 pytest-benchmark = "^4.0.0"
 pycryptodome = "^3.19.1"
 python = "^3.8"
-pycryptodome = "^3.19.1"
 
 [tool.poetry.dev-dependencies]
 conventional-pre-commit = "^3.0.0"
@@ -43,4 +42,7 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.pytest.ini_options]
-markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "benchmark: marks tests as benchmark (deselect with '-m \"not slow\"')",
+]

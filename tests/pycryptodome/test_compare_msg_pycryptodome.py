@@ -1,14 +1,15 @@
-from pytest import mark
-from keccaky import Keccaky
 from Crypto.Hash import keccak as pycryptodome_keccak
+from keccaky import Keccaky
+from pytest import mark
 
 KAT = []
 
 with open("./tests/pycryptodome/CompareMsgKAT_256.txt", "r") as file:
     lines = file.readlines()
 
-    for i in range(0, len(lines), 3):
-        KAT.append(lines[i].split("=")[1].strip())
+    for msg in lines:
+        data = bytes.fromhex(msg.split("=")[1].strip().lower())
+        KAT.append(data)
 
 
 @mark.parametrize("data", KAT)
