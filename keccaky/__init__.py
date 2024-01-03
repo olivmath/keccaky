@@ -1,1 +1,1 @@
-from keccaky.wip import KeccakHash
+from keccaky.wip import Keccaky

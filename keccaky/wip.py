@@ -214,7 +214,7 @@ class KeccakSponge(object):
         return Z[: int(l)]
 
 
-class KeccakHash(object):
+class Keccaky(object):
     def __bits2bytes(self, x):
         return (int(x) + 7) / 8
 
@@ -283,9 +283,8 @@ class KeccakHash(object):
         )
         return "<KeccakHash with r=%d, c=%d, image=%d>" % inf
 
-    def digest(self, data: str):
-        data_encoded = data.encode()
-        self.sponge.absorb(data_encoded)
+    def digest(self, data: bytes) -> bytes:
+        self.sponge.absorb(data)
         finalised = self.sponge.copy()
         finalised.absorb_final()
         digest = finalised.squeeze(self.digest_size)
