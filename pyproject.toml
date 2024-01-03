@@ -25,6 +25,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pycryptodome = "^3.19.1"
 
 [tool.poetry.dev-dependencies]
 conventional-pre-commit = "^3.0.0"
