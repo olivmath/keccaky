@@ -37,4 +37,4 @@ def test_check_state_file_KAT_256():
             calculated_next_hash_hex == expected_next_hash_hex
         ), f"🚨 Discrepancy in hash at index {i}."
 
-    print("✅ All hashes verified correctly.")
+    print(f"✅ {len(lines)} hashes verified correctly.")
