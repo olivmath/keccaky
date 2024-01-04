@@ -17,7 +17,7 @@ with open("./tests/keccaky/LongMsgKAT_256.txt", "r") as file:
 
 
 @mark.parametrize("data", KAT)
-def test_short_msg_KAT_256(data: Dict[str, bytes]):
+def test_long_msg_KAT_256(data: Dict[str, bytes]):
     k = Keccaky()
 
     result = k.digest(data["msg"])
