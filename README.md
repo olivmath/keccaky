@@ -7,16 +7,12 @@ Secure and easy-to-use keccak
 
 ## Roadmap
 
-- [ ] Create Keccak 256 hash
-- [ ] Validate Collision Attack
-- [ ] Validate Pre Image Attack
-- [ ] Validate Second Pre Image Attack
-- [ ] Validate Birthday Attack
-- [ ] Validate Length Extension Attack
-- [ ] Validate Brute Force Attack
-- [ ] Validate Side Channel Attack
-- [ ] Validate Specific Attacks
-
+- [x] Create Keccak 256 hash
+- [ ] Create massive tests agains pycryptodome
+- [ ] Create benchmark tests agains pycryptodome
+- [ ] API made easy for client
+- [ ] Docs dos dev
+- [ ] Re-write Keccak algorithm in Rust using FFI
 
 ## Docs
 
