@@ -3,6 +3,7 @@ from Crypto.Hash import keccak
 from tqdm import tqdm
 import os
 
+
 @mark.slow
 def test_check_state_file_KAT_256():
     state_file = "./tests/keccaky/test_state.txt"
@@ -14,9 +15,7 @@ def test_check_state_file_KAT_256():
         lines = f.readlines()
 
     if not lines or len(lines) < 2:
-        raise ValueError(
-            "The state file does not have enough lines for verification."
-        )
+        raise ValueError("The state file does not have enough lines for verification.")
 
     initial_message = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmno"
     hash_obj = keccak.new(data=initial_message.encode(), digest_bits=256)

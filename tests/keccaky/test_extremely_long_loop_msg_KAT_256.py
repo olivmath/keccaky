@@ -51,7 +51,6 @@ def run_test(k, start_loop, initial_result, state_file):
             assert result.hex() == expected
 
 
-
 @mark.slow
 def test_extremely_long_loop_msg_KAT_256():
     k = Keccaky()

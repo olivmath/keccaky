@@ -11,6 +11,7 @@ def keccaky_hash():
         result = k.digest(result)
     return result.hex()
 
+
 def pycryptodome_hash():
     keccak_256 = cryptodome_keccak.new(digest_bits=256)
     keccak_256.update("keccaky".encode())
@@ -22,10 +23,12 @@ def pycryptodome_hash():
         result = keccak_256.digest()
     return result.hex()
 
+
 @pytest.mark.benchmark(group="KeccakyHash")
 def test_keccaky_hash_speed(benchmark):
     result = benchmark(keccaky_hash)
     assert result == "8e9efbfab4a6693f61778ca0cc7401af1685912f7ffb4dc946eae43b4384dc14"
+
 
 @pytest.mark.benchmark(group="PyCryptodomeHash")
 def test_pycryptodome_hash_speed(benchmark):
