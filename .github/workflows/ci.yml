@@ -34,7 +34,7 @@ jobs:
       - name: ⛴️ Install dependencies with Poetry
         run: |
           poetry config virtualenvs.create false
-          poetry install
+          poetry install --with dev
       - name: 🧪 Test with pytest
         run: |
           poetry run pytest -m "not slow and not benchmark" -vv
