@@ -91,6 +91,21 @@ class KeccakState(object):
     rangeW = range(W)
     rangeH = range(H)
 
+    def __init__(self, bitrate, b):
+        self.bitrate = bitrate
+        self.b = b
+
+        # only byte-aligned
+        if self.bitrate % 8 != 0:
+            raise ValueError(f"bitrate must be multiple of 8, bitrate: {self.bitrate}")
+        self.bitrate_bytes = self.__bits2bytes(self.bitrate)
+
+        if self.b % 25 != 0:
+            raise ValueError(f"bitrate must be multiple of 25, bitrate: {self.bitrate}")
+        self.lanew = self.b // 25
+
+        self.s = KeccakState.zero()
+
     def __bits2bytes(self, x):
         return (int(x) + 7) // 8
 
@@ -125,21 +140,6 @@ class KeccakState(object):
         for b in reversed(bb):
             r = r << 8 | b
         return r
-
-    def __init__(self, bitrate, b):
-        self.bitrate = bitrate
-        self.b = b
-
-        # only byte-aligned
-        if self.bitrate % 8 != 0:
-            raise ValueError(f"bitrate must be multiple of 8, bitrate: {self.bitrate}")
-        self.bitrate_bytes = self.__bits2bytes(self.bitrate)
-
-        if self.b % 25 != 0:
-            raise ValueError(f"bitrate must be multiple of 25, bitrate: {self.bitrate}")
-        self.lanew = self.b // 25
-
-        self.s = KeccakState.zero()
 
     def __str__(self):
         return KeccakState.format(self.s)
@@ -221,7 +221,17 @@ class KeccakSponge(object):
         return Z[: int(l)]
 
 
-class Keccaky(object):
+class Keccak(object):
+    def __init__(self, bitrate_bits=1088, capacity_bits=512, digest_bits=256):
+        self.sponge = KeccakSponge(
+            bitrate_bits,
+            bitrate_bits + capacity_bits,
+            self.__multirate_padding,
+            self.__keccak_f,
+        )
+        self.digest_size = self.__bits2bytes(digest_bits)
+        self.block_size = self.__bits2bytes(bitrate_bits)
+
     def __bits2bytes(self, x):
         return (int(x) + 7) / 8
 
@@ -271,16 +281,6 @@ class Keccaky(object):
             return [0x81]
         else:
             return [0x01] + ([0x00] * (int(padlen) - 2)) + [0x80]
-
-    def __init__(self, bitrate_bits=1088, capacity_bits=512, output_bits=256):
-        self.sponge = KeccakSponge(
-            bitrate_bits,
-            bitrate_bits + capacity_bits,
-            self.__multirate_padding,
-            self.__keccak_f,
-        )
-        self.digest_size = self.__bits2bytes(output_bits)
-        self.block_size = self.__bits2bytes(bitrate_bits)
 
     def __repr__(self):
         inf = (
