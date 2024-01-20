@@ -13,10 +13,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: 🏗️ Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+      - name: 🏗️ Cache Poetry dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
       - name: 🏗️ Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
@@ -38,11 +45,14 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-      - name: 📦 Build (pre-deploy)
+      - name: 📦 Build
         run: |
           poetry publish --build --dry-run
+      - name: 🔐 Config
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          poetry config pypi-token.pypi $PYPI_API_TOKEN
       - name: 🚀 Deploy
         run: |
           poetry publish
-        with:
-          pypi_token: ${{ secrets.PYPI_API_TOKEN }}
