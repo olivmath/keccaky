@@ -131,10 +131,12 @@ class KeccakState(object):
         self.b = b
 
         # only byte-aligned
-        assert self.bitrate % 8 == 0
+        if self.bitrate % 8 != 0:
+            raise ValueError(f"bitrate must be multiple of 8, bitrate: {self.bitrate}")
         self.bitrate_bytes = self.__bits2bytes(self.bitrate)
 
-        assert self.b % 25 == 0
+        if self.b % 25 != 0:
+            raise ValueError(f"bitrate must be multiple of 25, bitrate: {self.bitrate}")
         self.lanew = self.b // 25
 
         self.s = KeccakState.zero()
@@ -143,7 +145,9 @@ class KeccakState(object):
         return KeccakState.format(self.s)
 
     def absorb(self, bb):
-        assert len(bb) == self.bitrate_bytes
+        if len(bb) != self.bitrate_bytes:
+            msg = f"length of bb ({len(bb)}) must be equal bitrate_bytes ({self.bitrate_bytes})"
+            raise ValueError(msg)
 
         bb += [0] * int(self.__bits2bytes(self.b - self.bitrate))
         i = 0
@@ -186,7 +190,10 @@ class KeccakSponge(object):
 
     def absorb_block(self, bb):
         self.state.bitrate_bytes = int(self.state.bitrate_bytes)
-        assert len(bb) == self.state.bitrate_bytes
+        if len(bb) != self.state.bitrate_bytes:
+            msg = f"length of bb ({len(bb)}) must be equal to bitrate_bytes ({self.state.bitrate_bytes})"
+            raise ValueError(msg)
+
         self.state.absorb(bb)
         self.permfn(self.state)
 
