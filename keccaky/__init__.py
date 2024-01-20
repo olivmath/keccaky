@@ -1,1 +1,1 @@
-from keccaky.wip import Keccaky
+from keccaky.algorithm import Keccaky
