@@ -30,6 +30,7 @@ poetry add keccaky
 ```python
 from keccaky import ethereum_hash, hash_it
 
-assert "0xff7e4a2e488ac0d8ed435b41979a0c1defeae30231dc5338a1b3a39c86adfd3c" == ethereum_hash("keccaky")
-assert "ff7e4a2e488ac0d8ed435b41979a0c1defeae30231dc5338a1b3a39c86adfd3c" == hash_it("keccaky")
+assert hash_it_bytes("keccaky".encode()).hex() == "ff7e4a2e488ac0d8ed435b41979a0c1defeae30231dc5338a1b3a39c86adfd3c"
+assert ethereum_hash("keccaky") == "0xff7e4a2e488ac0d8ed435b41979a0c1defeae30231dc5338a1b3a39c86adfd3c"
+assert hash_it("keccaky") == "ff7e4a2e488ac0d8ed435b41979a0c1defeae30231dc5338a1b3a39c86adfd3c"
 ```
