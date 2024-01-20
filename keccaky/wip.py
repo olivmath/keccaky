@@ -92,7 +92,7 @@ class KeccakState(object):
     rangeH = range(H)
 
     def __bits2bytes(self, x):
-        return (int(x) + 7) / 8
+        return (int(x) + 7) // 8
 
     @staticmethod
     def zero():
