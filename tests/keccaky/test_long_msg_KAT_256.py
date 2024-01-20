@@ -1,6 +1,6 @@
+from keccaky import hash_it_bytes
 from typing import Dict
 from pytest import mark
-from keccaky import Keccaky
 
 
 KAT = []
@@ -18,8 +18,6 @@ with open("./tests/keccaky/LongMsgKAT_256.txt", "r") as file:
 
 @mark.parametrize("data", KAT)
 def test_long_msg_KAT_256(data: Dict[str, bytes]):
-    k = Keccaky()
-
-    result = k.digest(data["msg"])
+    result = hash_it_bytes(data["msg"])
 
     assert result == data["expected"]

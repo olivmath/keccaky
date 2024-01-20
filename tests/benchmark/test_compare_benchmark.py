@@ -1,14 +1,13 @@
 from Crypto.Hash import keccak as cryptodome_keccak
-from keccaky import Keccaky
+from keccaky import hash_it_bytes
 import pytest
 
 
 def keccaky_hash():
-    k = Keccaky()
-    result = k.digest("keccaky".encode())
+    result = hash_it_bytes("keccaky".encode())
     total_iterations = 1000
     for _ in range(total_iterations):
-        result = k.digest(result)
+        result = hash_it_bytes(result)
     return result.hex()
 
 

@@ -1,5 +1,5 @@
 from Crypto.Hash import keccak as pycryptodome_keccak
-from keccaky import Keccaky
+from keccaky import hash_it_bytes
 from pytest import mark
 
 KAT = []
@@ -20,7 +20,6 @@ def test_compare_msg_pycryptodome(data: bytes):
     result_pycryptodome = pycryptodome.digest()
 
     # KECCAKY
-    keccaky = Keccaky()
-    result_keccaky = keccaky.digest(data)
+    result_keccaky = hash_it_bytes(data)
 
     assert result_keccaky == result_pycryptodome
