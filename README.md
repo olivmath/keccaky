@@ -2,11 +2,10 @@
 
 Secure and easy-to-use keccak
 
-> [!TIP]
-> **✅ ready for production!!!**
+| **✅ ready for production!!!**
 
 > [!IMPORTANT]  
-> Crucial information necessary for users to succeed.]
+> 17 million tests have been carried out to validate this library, see [here]()
 
 ## Roadmap
 
