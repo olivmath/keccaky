@@ -2,10 +2,8 @@
 
 Secure and easy-to-use keccak
 
-| **✅ ready for production!!!**
-
 > [!IMPORTANT]  
-> 17 million tests have been carried out to validate this library, see [here]()
+> **17 Million tests** have been carried out to validate this library, see [here]()
 
 ## Roadmap
 
