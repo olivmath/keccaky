@@ -3,7 +3,7 @@
 Secure and easy-to-use keccak
 
 > [!TIP]  
-> **17 Million tests** have been carried out to validate this library, see [here]()
+> **17 MILLIONS TESTS PASSED** are validating this library, see [here]()
 
 ## Roadmap
 
