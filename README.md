@@ -2,7 +2,8 @@
 
 Secure and easy-to-use keccak
 
-> **✅ ready for production!!!**
+> [!TIP]  
+> **17 MILLIONS TESTS PASSED** are validating this library, see [here]()
 
 ## Roadmap
 
